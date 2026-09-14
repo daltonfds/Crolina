@@ -1,0 +1,4 @@
+import express from 'express'; import cors from 'cors'; import fs from 'node:fs'; import path from 'node:path';
+import uploadRouter from './routes/upload.js'; import documentsRouter from './routes/documents.js'; import exportRouter from './routes/exports.js';
+const app=express(), port=Number(process.env.PORT||4000); fs.mkdirSync(path.resolve(process.env.UPLOAD_DIR||'./uploads'),{recursive:true}); fs.mkdirSync(path.resolve(process.env.OUTPUT_DIR||'./outputs'),{recursive:true});
+app.use(cors({origin:process.env.CORS_ORIGIN?.split(',')||true})); app.use(express.json({limit:'2mb'})); app.get('/api/health',(_,r)=>r.json({ok:true,name:'Crolina'})); app.use('/api',uploadRouter); app.use('/api',documentsRouter); app.use('/api',exportRouter); app.use((e,_,r,__)=>r.status(e.status||500).json({error:e.message||'Erro interno'})); app.listen(port,()=>console.log(`Crolina API a correr na porta ${port}`));

@@ -1,0 +1,3 @@
+import express from 'express'; import {supabase,authUser} from '../supabase.js'; const r=express.Router(); const scope=(q,u)=>u?q.eq('user_id',u):q.is('user_id',null);
+r.get('/documents',authUser,async(req,res,next)=>{try{const {data,error}=await scope(supabase.from('documents').select('*').order('created_at',{ascending:false}),req.user?.id);if(error)throw error;res.json({documents:data})}catch(e){next(e)}});
+r.get('/documents/:id',authUser,async(req,res,next)=>{try{const {data,error}=await scope(supabase.from('documents').select('*').eq('id',req.params.id),req.user?.id).single();if(error)throw error;res.json({document:data})}catch(e){next(e)}});export default r;
