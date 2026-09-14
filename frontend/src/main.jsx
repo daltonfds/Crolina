@@ -13,6 +13,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
+import * as tus from "tus-js-client";
 import "./style.css";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -222,18 +223,62 @@ function App() {
       .replace(/\s+/g, "_");
 
     const uniqueName = `${Date.now()}-${crypto.randomUUID()}.${extension}`;
-
     const storagePath = `${userId}/${uniqueName}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET)
-      .upload(storagePath, selectedFile, {
-        contentType: selectedFile.type || "application/octet-stream",
-        upsert: false,
-        cacheControl: "3600",
+    const {
+      data: { session: currentSession },
+    } = await supabase.auth.getSession();
+
+    if (!currentSession?.access_token) {
+      throw new Error("Sessão expirada. Entre novamente na Crolina.");
+    }
+
+    await new Promise((resolve, reject) => {
+      const upload = new tus.Upload(selectedFile, {
+        endpoint: `${SUPABASE_URL}/storage/v1/upload/resumable`,
+
+        retryDelays: [0, 3000, 5000, 10000, 20000],
+
+        chunkSize: 6 * 1024 * 1024,
+
+        headers: {
+          authorization: `Bearer ${currentSession.access_token}`,
+          apikey: SUPABASE_KEY,
+          "x-upsert": "false",
+        },
+
+        metadata: {
+          bucketName: BUCKET,
+          objectName: storagePath,
+          contentType:
+            selectedFile.type || "application/octet-stream",
+          cacheControl: "3600",
+        },
+
+        onError(error) {
+          console.error("Erro no upload TUS:", error);
+          reject(
+            new Error(
+              error?.message || "Não foi possível enviar o arquivo."
+            )
+          );
+        },
+
+        onProgress(bytesUploaded, bytesTotal) {
+          const percentage = Math.round(
+            (bytesUploaded / bytesTotal) * 100
+          );
+
+          console.log(`Upload: ${percentage}%`);
+        },
+
+        onSuccess() {
+          resolve();
+        },
       });
 
-    if (uploadError) throw uploadError;
+      upload.start();
+    });
 
     return {
       storagePath,
