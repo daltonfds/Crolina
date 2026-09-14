@@ -905,8 +905,7 @@ function App() {
       
 <a
   href="https://github.com/daltonfds/Crolina/releases/download/v1.0.0/Crolina.apk"
-  target="_blank"
-  rel="noopener noreferrer"
+  download="Crolina.apk"
   className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:bg-blue-700"
 >
   <svg
