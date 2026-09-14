@@ -902,7 +902,32 @@ function App() {
             ))
           )}
         </section>
-      </main>
+      
+<a
+  href="https://github.com/daltonfds/Crolina/releases/download/v1.0.0/Crolina.apk"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:bg-blue-700"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 3v12" />
+    <path d="m7 10 5 5 5-5" />
+    <path d="M5 21h14" />
+  </svg>
+  Baixar Crolina para Android
+</a>
+
+</main>
     </>
   );
 }
