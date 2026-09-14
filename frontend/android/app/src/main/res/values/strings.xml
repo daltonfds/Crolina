@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Crolina</string>
+    <string name="title_activity_main">Crolina</string>
+    <string name="package_name">com.crolina.app</string>
+    <string name="custom_url_scheme">com.crolina.app</string>
+</resources>
